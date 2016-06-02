@@ -6,6 +6,7 @@
     <input name="date-to" class="easyui-datebox date-to" style="width:110px;" data-options="prompt:'<%- i18n.t('admin.schedules.toDatePrompt') %>'">
     <input name="text-search" class="easyui-searchbox text-search" style="width:300px;" data-options="prompt:'<%- i18n.t('admin.schedules.searchTextPrompt') %>'">
     <span class="easyui-menubutton" data-options="menu:'#schedules-menu'"><%- i18n.t('admin.actions.title') %></span>
+    <a href="/export/schedules" id="export" class="easyui-linkbutton"><%- i18n.t('admin.actions.export') %></a>
 </div>
 <div id="schedules-menu" style="width:150px;">
     <div name="add" data-options="iconCls:'fa fa-plus'"><%- i18n.t('admin.actions.add') %></div>

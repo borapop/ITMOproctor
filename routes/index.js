@@ -15,7 +15,9 @@ var tools = require('./tools');
 var admin = require('./admin');
 var user = require('./user');
 var schedule = require('./schedule');
+var _export = require('./export');
 module.exports = function(app) {
+    app.use('/export', _export);
     app.use('/dist', dist);
     app.use('/api', api);
     app.use('/rest', rest);
