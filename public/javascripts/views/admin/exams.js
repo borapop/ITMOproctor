@@ -7,15 +7,17 @@ define([
     "views/exam/viewer",
     "views/exam/editor",
     "views/profile/viewer",
-    "views/passport/viewer"
-], function(i18n, template, ExamViewer, ExamEditor, ProfileViewer, PassportViewer) {
+    "views/passport/viewer",
+    "collections/attach"
+], function(i18n, template, ExamViewer, ExamEditor, ProfileViewer, PassportViewer, Attach) {
     console.log('views/admin/exams.js');
     var View = Backbone.View.extend({
         events: {
             "click .exam-btn": "doExamInfo",
             "click .student-btn": "doStudentInfo",
             "click .inspector-btn": "doInspectorInfo",
-            "click .play-btn": "doPlay"
+            "click .play-btn": "doPlay",
+            "click #import": "doAttach"
         },
         initialize: function(options) {
             // Variables
@@ -65,6 +67,26 @@ define([
                     }
                 }
             });
+            
+            this.$Import = this.$("#import");
+            this.attach = new Attach([], {
+                onStart: function(file) {
+                    var reader = new FileReader();
+                    reader.onload = function(event) {
+                        console.log(event.target.result);
+                        var xhr = new XMLHttpRequest();
+                        
+                        xhr.open("POST", '/export/exams/', true);
+                        xhr.setRequestHeader('Content-Type', 'text/plain');
+                        xhr.send(JSON.stringify(event.target.result));
+                    };
+                    
+                    reader.readAsText(file);
+                    
+                    
+                }
+            });
+            
             // Event handlers
             this.$FromDate = this.$(".date-from");
             this.$FromDate.datebox({
@@ -355,6 +377,9 @@ define([
                 function(r) {
                     if (r) self.removeRows(selected);
                 });
+        },
+        doAttach: function() {
+            this.attach.create();
         }
     });
     return View;

@@ -27,6 +27,7 @@ app.use(morgan("short", {
     "stream": logger.stream
 }));
 app.use(bodyParser.json());
+app.use(bodyParser.text());
 app.use(bodyParser.urlencoded({
     extended: false
 }));

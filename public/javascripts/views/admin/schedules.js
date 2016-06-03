@@ -5,12 +5,14 @@ define([
     "i18n",
     "text!templates/admin/schedules.html",
     "views/schedule/editor",
-    "views/profile/viewer"
-], function(i18n, template, ScheduleEditor, ProfileViewer) {
+    "views/profile/viewer",
+    "collections/attach"
+], function(i18n, template, ScheduleEditor, ProfileViewer, Attach) {
     console.log('views/admin/schedules.js');
     var View = Backbone.View.extend({
         events: {
-            "click .inspector-info": "doInspectorInfo"
+            "click .inspector-info": "doInspectorInfo",
+            "click #import": "doAttach"
         },
         initialize: function() {
             // Templates
@@ -57,6 +59,25 @@ define([
                             self.doExport();
                             break;
                     }
+                }
+            });
+            
+            this.$Import = this.$("#import");
+            this.attach = new Attach([], {
+                onStart: function(file) {
+                    var reader = new FileReader();
+                    reader.onload = function(event) {
+                        console.log(event.target.result);
+                        var xhr = new XMLHttpRequest();
+                        
+                        xhr.open("POST", '/export/schedules/', true);
+                        xhr.setRequestHeader('Content-Type', 'text/plain');
+                        xhr.send(JSON.stringify(event.target.result));
+                    };
+                    
+                    reader.readAsText(file);
+                    
+                    
                 }
             });
 
@@ -235,6 +256,9 @@ define([
                 function(r) {
                     if (r) self.removeRows(selected);
                 });
+        },
+        doAttach: function() {
+            this.attach.create();
         }
     });
     return View;

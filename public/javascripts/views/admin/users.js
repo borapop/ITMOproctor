@@ -5,12 +5,14 @@ define([
     "i18n",
     "text!templates/admin/users.html",
     "views/user/viewer",
-    "views/user/editor"
-], function(i18n, template, UserViewer, UserEditor) {
+    "views/user/editor",
+    "collections/attach"
+], function(i18n, template, UserViewer, UserEditor, Attach) {
     console.log('views/admin/users.js');
     var View = Backbone.View.extend({
         events: {
-            "click .user-info": "doUserInfo"
+            "click .user-info": "doUserInfo",
+            "click #import": "doAttach"
         },
         initialize: function() {
             // Templates
@@ -62,7 +64,26 @@ define([
                     }
                 }
             });
-
+            
+            this.$Import = this.$("#import");
+            this.attach = new Attach([], {
+                onStart: function(file) {
+                    var reader = new FileReader();
+                    reader.onload = function(event) {
+                        console.log(event.target.result);
+                        var xhr = new XMLHttpRequest();
+                        
+                        xhr.open("POST", '/export/users/', true);
+                        xhr.setRequestHeader('Content-Type', 'text/plain');
+                        xhr.send(JSON.stringify(event.target.result));
+                    };
+                    
+                    reader.readAsText(file);
+                    
+                    
+                }
+            });
+            
             this.$TextSearch = this.$(".text-search");
             this.$TextSearch.searchbox({
                 searcher: this.doSearch.bind(this)
@@ -226,7 +247,11 @@ define([
                 function(r) {
                     if (r) self.removeRows(selected);
                 });
+        },
+        doAttach: function() {
+            this.attach.create();
         }
+        
     });
     return View;
 });
